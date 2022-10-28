@@ -29,7 +29,9 @@ public class CustomSecurityConfig {
         });
 
         http.authorizeRequests().antMatchers("/api/ping/*").permitAll();
+        http.authorizeRequests().antMatchers("/api/sampleTodos/*").permitAll();
 
+        http.csrf().disable();
         http.formLogin().disable();
 
         return http.build();
