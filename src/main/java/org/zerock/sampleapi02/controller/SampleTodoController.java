@@ -25,18 +25,16 @@ public class SampleTodoController {
 
     private final SampleTodoService sampleTodoService;
 
-    @Value("${org.zerock.upload.path}")// import 시에 springframework으로 시작하는 Value
-    private String uploadPath;
-
 
     @GetMapping("/list")
     public PageResponseDTO<SampleTodoViewDTO> list(PageRequestDTO pageRequestDTO){
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+
         return sampleTodoService.list(pageRequestDTO);
 
     }
@@ -48,7 +46,7 @@ public class SampleTodoController {
         log.info("ID: " + id);
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -62,49 +60,30 @@ public class SampleTodoController {
         log.info("-----------------------------------------");
         log.info(sampleTodoDTO);
 
-        SampleTodoViewDTO result = null;
-
         //file upload
         MultipartFile[] multipartFiles = sampleTodoDTO.getFiles();
 
-        if(multipartFiles != null && multipartFiles.length > 0){
-
-            List<UploadResultDTO> uploadResultDTOS = uploadFiles(multipartFiles);
-            result = sampleTodoService.add(sampleTodoDTO, uploadResultDTOS);
-        }else {
-            result = sampleTodoService.add(sampleTodoDTO, null);
-        }
+        SampleTodoViewDTO result = sampleTodoService.add(sampleTodoDTO);
 
         return result;
     }
 
-    private List<UploadResultDTO> uploadFiles(MultipartFile[] multipartFiles) {
+    @DeleteMapping("/{id}")
+    public Map<String, String> removeAll( @PathVariable("id")Long id ) {
 
-        List<UploadResultDTO> uploadResultDTOS = new ArrayList<>();
+        sampleTodoService.remove(id);
 
-        for (MultipartFile multiFile:multipartFiles) {
+        return Map.of("result", "success");
 
-            String fileName = multiFile.getOriginalFilename();
-
-            String uuidValue = UUID.randomUUID().toString();
-
-            String savedName = uuidValue+"_"+fileName;
-
-            File saveFile = new File(uploadPath, savedName );
-
-            log.info(saveFile);
-
-            try {
-                FileCopyUtils.copy(multiFile.getBytes(), saveFile);
-
-                uploadResultDTOS.add(new UploadResultDTO(uuidValue,"/", fileName));
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }//
-        }
-        return uploadResultDTOS;
     }
 
+    @PostMapping(value ="/modify/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public SampleTodoViewDTO modify( @PathVariable("id") Long id,  SampleTodoDTO sampleTodoDTO ){
+
+        log.info("modify......................" + id);
+        log.info(sampleTodoDTO);
+
+        return sampleTodoService.modify(sampleTodoDTO);
+    }
 
 }

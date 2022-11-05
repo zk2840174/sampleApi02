@@ -35,7 +35,7 @@ public class SampleTodo {
     private boolean complete;
 
     @ElementCollection
-    @CollectionTable(name = "tbl_sample_todo_filess")
+    @CollectionTable(name = "tbl_sample_todo_files")
     @Builder.Default
     @Fetch(FetchMode.JOIN)
     @BatchSize(size = 100)

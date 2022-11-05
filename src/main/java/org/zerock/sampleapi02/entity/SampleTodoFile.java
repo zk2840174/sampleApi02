@@ -13,8 +13,8 @@ import javax.persistence.Embeddable;
 public class SampleTodoFile implements Comparable<SampleTodoFile>{
 
     private String uuid;
-    private String savePath;
     private String fileName;
+    private String type;
     private int idx;
 
 

@@ -11,11 +11,16 @@ import java.util.stream.Collectors;
 
 public interface SampleTodoService {
 
-    SampleTodoViewDTO add(SampleTodoDTO sampleTodoDTO, List<UploadResultDTO> uploadResultDTOList);
+    SampleTodoViewDTO add(SampleTodoDTO sampleTodoDTO);
 
     SampleTodoViewDTO read(Long id);
 
     PageResponseDTO<SampleTodoViewDTO> list(PageRequestDTO pageRequestDTO);
+
+    void remove(Long id);
+
+    SampleTodoViewDTO modify(SampleTodoDTO sampleTodoDTO);
+
 
     default SampleTodo dtoToEntity(SampleTodoDTO sampleTodoDTO, List<UploadResultDTO> uploadResultDTOS){
 
@@ -32,7 +37,7 @@ public interface SampleTodoService {
                 fileSet.add(SampleTodoFile.builder()
                                 .idx(i)
                                 .uuid(uploadResultDTO.getUuid())
-                                .savePath(uploadResultDTO.getSavePath())
+                                .type(uploadResultDTO.getType())
                                 .fileName(uploadResultDTO.getFileName())
                         .build());
             }
@@ -60,10 +65,11 @@ public interface SampleTodoService {
 
             uploadResultDTOList = sampleTodo.getFiles().stream().map(todoFile -> {
 
-                UploadResultDTO uploadResultDTO = new UploadResultDTO(
-                        todoFile.getUuid(),
-                        todoFile.getSavePath(),
-                        todoFile.getFileName());
+                UploadResultDTO uploadResultDTO = UploadResultDTO.builder()
+                        .uuid(todoFile.getUuid())
+                        .type(todoFile.getType())
+                        .fileName(todoFile.getFileName())
+                        .build();
 
                 return uploadResultDTO;
 
